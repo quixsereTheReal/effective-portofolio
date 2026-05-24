@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quixsere — Roblox Modeller &amp; Builder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:#07090f; --bg2:#0c0f1a; --card:#111520;
+      --border:rgba(255,255,255,0.06); --border-h:rgba(138,100,255,0.4);
+      --accent:#8a64ff; --accent2:#00d4ff; --gold:#f5c842;
+      --green:#23d18b; --red:#ff5555; --text:#dde1f0; --muted:#5a6480;
+      --glow-p:0 0 30px rgba(138,100,255,0.3);
+    }
+    html { scroll-behavior:smooth; }
+    body { background:var(--bg); color:var(--text); font-family:'Outfit',sans-serif; font-size:16px; line-height:1.6; overflow-x:hidden; }
+    body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E"); pointer-events:none; z-index:900; opacity:.6; }
+    .orb { position:fixed; border-radius:50%; filter:blur(80px); pointer-events:none; z-index:0; opacity:.18; }
+    .orb-1 { width:500px;height:500px; background:var(--accent); top:-100px; left:-100px; }
+    .orb-2 { width:400px;height:400px; background:var(--accent2); bottom:10%; right:-80px; }
+    .orb-3 { width:300px;height:300px; background:var(--gold); top:50%; left:40%; }
+    nav { position:fixed; top:0; left:0; right:0; z-index:500; display:flex; align-items:center; justify-content:space-between; padding:16px 48px; background:rgba(7,9,15,0.75); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); }
+    .nav-logo { font-family:'Outfit',sans-serif; font-weight:800; font-size:1.35rem; letter-spacing:-0.5px; display:flex; align-items:center; gap:10px; color:var(--text); text-decoration:none; }
+    .nav-logo-icon { width:34px; height:34px; background:linear-gradient(135deg,var(--accent),var(--accent2)); border-radius:8px; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+    .nav-logo-icon img { width:34px; height:34px; object-fit:cover; border-radius:8px; }
+    .logo-q { color:var(--accent); }
+    .nav-center { display:flex; gap:8px; align-items:center; }
+    .nav-link { font-size:.82rem; font-weight:500; color:var(--muted); text-decoration:none; padding:7px 14px; border-radius:6px; display:flex; align-items:center; gap:6px; transition:color .2s,background .2s; letter-spacing:.3px; }
+    .nav-link svg { width:13px;height:13px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+    .nav-link:hover { color:var(--text); background:rgba(255,255,255,.04); }
+    .nav-right { display:flex; align-items:center; gap:10px; }
+    .badge-available { display:flex; align-items:center; gap:6px; padding:6px 12px; background:rgba(35,209,139,.08); border:1px solid rgba(35,209,139,.2); border-radius:20px; font-size:.72rem; font-weight:600; color:var(--green); letter-spacing:.5px; font-family:'JetBrains Mono',monospace; }
+    .badge-dot { width:6px;height:6px; border-radius:50%; background:var(--green); animation:pulse 2s infinite; }
+    .btn-contact { display:flex; align-items:center; gap:8px; padding:9px 18px; background:linear-gradient(135deg,var(--accent),#6040dd); border:none; border-radius:8px; color:#fff; font-family:'Outfit',sans-serif; font-weight:600; font-size:.82rem; cursor:pointer; text-decoration:none; transition:opacity .2s,box-shadow .2s; letter-spacing:.3px; }
+    .btn-contact:hover { opacity:.85; box-shadow:var(--glow-p); }
+    .btn-contact svg { width:14px;height:14px; fill:#fff; }
+    .btn-x { background:linear-gradient(135deg,#1a1a1a,#333) !important; }
+    .hamburger { display:none; flex-direction:column; gap:5px; background:none; border:1px solid var(--border); border-radius:8px; padding:10px; cursor:pointer; }
+    .hamburger span { display:block; width:20px; height:2px; background:var(--text); border-radius:2px; }
+    .mobile-menu { display:none; position:fixed; top:64px; left:0; right:0; z-index:490; background:rgba(7,9,15,.97); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:16px 24px 24px; flex-direction:column; gap:4px; }
+    .mobile-menu.open { display:flex; }
+    .mobile-menu a { color:var(--text); text-decoration:none; font-weight:500; font-size:.9rem; padding:12px 16px; border-radius:8px; display:flex; align-items:center; gap:10px; transition:background .2s; }
+    .mobile-menu a:hover { background:rgba(255,255,255,.04); }
+    .mobile-menu a svg { width:16px;height:16px; stroke:var(--accent); fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+    .mobile-menu a .x-icon { fill:var(--accent); stroke:none; }
+    #hero { position:relative; z-index:1; min-height:100vh; display:flex; align-items:center; padding:120px 48px 80px; }
+    .hero-inner { max-width:1100px; margin:0 auto; width:100%; display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
+    .hero-tag { display:inline-flex; align-items:center; gap:8px; padding:6px 14px; background:rgba(138,100,255,.1); border:1px solid rgba(138,100,255,.25); border-radius:20px; font-family:'JetBrains Mono',monospace; font-size:.72rem; color:var(--accent); letter-spacing:1px; margin-bottom:22px; opacity:0; animation:fadeUp .5s .1s ease forwards; }
+    .hero-tag svg { width:12px;height:12px; stroke:var(--accent); fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+    .hero-title { font-weight:900; font-size:clamp(2.6rem,5.5vw,4.8rem); line-height:1.02; letter-spacing:-2.5px; margin-bottom:24px; opacity:0; animation:fadeUp .6s .2s ease forwards; }
+    .hero-title .name { color:var(--accent); }
+    .hero-title .role { display:block; font-size:clamp(1.1rem,2.5vw,1.7rem); font-weight:500; letter-spacing:-.5px; color:var(--muted); margin-top:4px; }
+    .hero-desc { font-size:1rem; color:var(--muted); max-width:480px; line-height:1.8; margin-bottom:36px; opacity:0; animation:fadeUp .6s .35s ease forwards; }
+    .hero-pills { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:36px; opacity:0; animation:fadeUp .6s .45s ease forwards; }
+    .pill { display:flex; align-items:center; gap:7px; padding:7px 14px; background:var(--card); border:1px solid var(--border); border-radius:20px; font-size:.78rem; font-weight:500; color:var(--text); }
+    .pill svg { width:13px;height:13px; stroke:var(--accent2); fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+    .hero-btns { display:flex; gap:12px; flex-wrap:wrap; opacity:0; animation:fadeUp .6s .55s ease forwards; }
+    .btn-primary { display:flex; align-items:center; gap:8px; padding:14px 28px; background:linear-gradient(135deg,var(--accent),#6040dd); border:none; border-radius:10px; color:#fff; font-family:'Outfit',sans-serif; font-weight:700; font-size:.9rem; cursor:pointer; text-decoration:none; transition:opacity .2s,box-shadow .2s,transform .2s; letter-spacing:.2px; }
+    .btn-primary:hover { opacity:.85; box-shadow:var(--glow-p); transform:translateY(-2px); }
+    .btn-primary svg { width:16px;height:16px; stroke:#fff; fill:none; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; }
+    .btn-ghost { display:flex; align-items:center; gap:8px; padding:14px 28px; background:transparent; border:1px solid var(--border); border-radius:10px; color:var(--text); font-family:'Outfit',sans-serif; font-weight:600; font-size:.9rem; cursor:pointer; text-decoration:none; transition:border-color .2s,color .2s,transform .2s; }
+    .btn-ghost:hover { border-color:var(--accent); color:var(--accent); transform:translateY(-2px); }
+    .btn-ghost svg { width:16px;height:16px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+    .hero-card { background:var(--card); border:1px solid var(--border); border-radius:20px; padding:32px; opacity:0; animation:fadeRight .7s .5s ease forwards; }
+    .hero-card-title { font-family:'JetBrains Mono',monospace; font-size:.7rem; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:24px; display:flex; align-items:center; gap:8px; }
+    .hero-card-title::before { content:''; display:block; width:20px; height:1px; background:var(--muted); }
+    .stat-row { display:flex; flex-direction:column; gap:16px; }
+    .stat-item { display:flex; align-items:center; gap:16px; padding:14px 18px; background:rgba(255,255,255,.025); border:1px solid var(--border); border-radius:10px; transition:border-color .3s; }
+    .stat-item:hover { border-color:var(--border-h); }
+    .stat-icon { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .si-purple{background:rgba(138,100,255,.15);} .si-cyan{background:rgba(0,212,255,.15);} .si-gold{background:rgba(245,200,66,.15);} .si-green{background:rgba(35,209,139,.15);}
+    .stat-icon svg { width:20px;height:20px; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+    .si-purple svg{stroke:var(--accent);} .si-cyan svg{stroke:var(--accent2);} .si-gold svg{stroke:var(--gold);} .si-green svg{stroke:var(--green);}
+    .stat-info{flex:1;} .stat-num{font-weight:800;font-size:1.4rem;letter-spacing:-0.5px;line-height:1;}
+    .s-purple{color:var(--accent);} .s-cyan{color:var(--accent2);} .s-gold{color:var(--gold);} .s-green{color:var(--green);}
+    .stat-lbl{font-size:.75rem;color:var(--muted);margin-top:2px;}
+    .section { position:relative; z-index:1; padding:100px 48px; }
+    .section-alt { background:var(--bg2); border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+    .section-inner { max-width:1100px; margin:0 auto; }
+    .section-eyebrow { display:inline-flex; align-items:center; gap:8px; font-family:'JetBrains Mono',monospace; font-size:.7rem; letter-spacing:2.5px; text-transform:uppercase; color:var(--accent); margin-bottom:12px; }
+    .section-eyebrow svg { width:12px;height:12px; stroke:var(--accent); fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+    .section-eyebrow-cyan{color:var(--accent2);} .section-eyebrow-cyan svg{stroke:var(--accent2);}
+    .section-eyebrow-gold{color:var(--gold);} .section-eyebrow-gold svg{stroke:var(--gold);}
+    .section-title { font-weight:800; font-size:clamp(1.8rem,3.5vw,2.8rem); letter-spacing:-1.2px; margin-bottom:8px; line-height:1.1; }
+    .section-sub { color:var(--muted); font-size:.95rem; max-width:600px; line-height:1.75; margin-bottom:52px; }
+    .skills-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:16px; }
+    .skill-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:28px; transition:border-color .3s,transform .3s,box-shadow .3s; position:relative; overflow:hidden; }
+    .skill-card::after { content:''; position:absolute; inset:0; border-radius:16px; background:linear-gradient(135deg,rgba(138,100,255,.05),transparent); opacity:0; transition:opacity .3s; }
+    .skill-card:hover { border-color:var(--border-h); transform:translateY(-6px); box-shadow:var(--glow-p); }
+    .skill-card:hover::after { opacity:1; }
+    .skill-icon-wrap { width:52px; height:52px; border-radius:14px; display:flex; align-items:center; justify-content:center; margin-bottom:18px; }
+    .sik-purple{background:rgba(138,100,255,.12);border:1px solid rgba(138,100,255,.2);}
+    .sik-cyan{background:rgba(0,212,255,.12);border:1px solid rgba(0,212,255,.2);}
+    .sik-gold{background:rgba(245,200,66,.12);border:1px solid rgba(245,200,66,.2);}
+    .sik-green{background:rgba(35,209,139,.12);border:1px solid rgba(35,209,139,.2);}
+    .skill-icon-wrap svg{width:26px;height:26px;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+    .sik-purple svg{stroke:var(--accent);} .sik-cyan svg{stroke:var(--accent2);} .sik-gold svg{stroke:var(--gold);} .sik-green svg{stroke:var(--green);}
+    .skill-card h3{font-weight:700;font-size:1.05rem;margin-bottom:8px;} .skill-card p{color:var(--muted);font-size:.875rem;line-height:1.7;}
+    .skill-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;}
+    .skill-tag{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.5px;padding:3px 9px;border-radius:4px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--border);}
+    .status-row{display:flex;flex-wrap:wrap;gap:16px;}
+    .status-card{flex:1;min-width:220px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 26px;display:flex;align-items:center;gap:16px;}
+    .status-icon-wrap{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .sic-green{background:rgba(35,209,139,.1);border:1px solid rgba(35,209,139,.2);}
+    .sic-red{background:rgba(255,85,85,.1);border:1px solid rgba(255,85,85,.2);}
+    .sic-gold{background:rgba(245,200,66,.1);border:1px solid rgba(245,200,66,.2);}
+    .status-icon-wrap svg{width:22px;height:22px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+    .sic-green svg{stroke:var(--green);} .sic-red svg{stroke:var(--red);} .sic-gold svg{stroke:var(--gold);}
+    .status-lbl{font-size:.72rem;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:1px;margin-bottom:4px;}
+    .status-val{font-weight:700;font-size:1rem;}
+    .sv-green{color:var(--green);} .sv-red{color:var(--red);} .sv-gold{color:var(--gold);}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+    .media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px;}
+    .media-card,.img-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:border-color .3s,transform .3s;}
+    .media-card:hover,.img-card:hover{border-color:var(--border-h);transform:translateY(-4px);}
+    .img-card{cursor:pointer;}
+    .media-thumb,.img-wrap{width:100%;aspect-ratio:16/9;background:#0a0d14;overflow:hidden;position:relative;display:block;}
+    .media-thumb img,.media-thumb iframe,.img-wrap img,.img-wrap iframe{width:100%;height:100%;object-fit:cover;border:none;display:block;}
+    .media-card:hover .media-thumb img,.img-card:hover .img-wrap img{transform:scale(1.05);transition:transform .4s ease;}
+    .img-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#0e1120,#111828);}
+    .img-placeholder svg{width:36px;height:36px;stroke:var(--muted);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+    .img-placeholder span{font-size:.75rem;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:1px;}
+    .card-info{padding:16px 18px;display:flex;align-items:center;justify-content:space-between;}
+    .card-info-left{display:flex;align-items:center;gap:10px;}
+    .card-num{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);letter-spacing:1px;}
+    .card-label{font-weight:600;font-size:.88rem;}
+    .card-badge{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.5px;padding:3px 8px;border-radius:4px;}
+    .cb-purple{background:rgba(138,100,255,.12);color:var(--accent);border:1px solid rgba(138,100,255,.2);}
+    .cb-cyan{background:rgba(0,212,255,.12);color:var(--accent2);border:1px solid rgba(0,212,255,.2);}
+    .cb-gold{background:rgba(245,200,66,.12);color:var(--gold);border:1px solid rgba(245,200,66,.2);}
+    .lightbox{display:none;position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.9);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:24px;}
+    .lightbox.open{display:flex;}
+    .lightbox-img{max-width:90vw;max-height:88vh;border-radius:12px;object-fit:contain;}
+    .lightbox-close{position:absolute;top:20px;right:20px;background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:8px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text);font-size:1.2rem;transition:background .2s;}
+    .lightbox-close:hover{background:rgba(255,255,255,.18);}
+    .projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px;}
+    .project-card{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;transition:border-color .3s,transform .3s,box-shadow .3s;}
+    .project-card:hover{border-color:var(--border-h);transform:translateY(-6px);box-shadow:var(--glow-p);}
+    .project-thumb{width:100%;aspect-ratio:16/9;background:#0a0d14;overflow:hidden;position:relative;}
+    .project-thumb img,.project-thumb iframe{width:100%;height:100%;object-fit:cover;border:none;display:block;transition:transform .4s;}
+    .project-card:hover .project-thumb img{transform:scale(1.05);}
+    .project-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(7,9,15,.25) 0%,transparent 60%);pointer-events:none;}
+    .project-body{padding:22px 24px;}
+    .project-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+    .project-tag{font-family:'JetBrains Mono',monospace;font-size:.62rem;padding:3px 9px;border-radius:4px;border:1px solid var(--border);color:var(--muted);}
+    .project-title{font-weight:700;font-size:1.05rem;margin-bottom:6px;}
+    .project-desc{color:var(--muted);font-size:.85rem;line-height:1.65;}
+    .pricing-layout{display:grid;grid-template-columns:1fr 1fr;gap:28px;}
+    .price-main{background:var(--card);border:1px solid rgba(138,100,255,.3);border-radius:18px;padding:36px;position:relative;overflow:hidden;}
+    .price-main::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));}
+    .price-amount{font-weight:900;font-size:3.5rem;letter-spacing:-2px;line-height:1;}
+    .price-amount span{font-size:1.2rem;font-weight:400;color:var(--muted);letter-spacing:0;}
+    .price-or{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);letter-spacing:1px;margin:6px 0 20px;}
+    .price-feature{display:flex;align-items:center;gap:10px;font-size:.88rem;color:var(--muted);margin-bottom:10px;}
+    .price-feature svg{width:15px;height:15px;stroke:var(--green);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+    .payments-col{display:flex;flex-direction:column;gap:16px;}
+    .pay-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;display:flex;gap:16px;align-items:flex-start;}
+    .pay-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .pi-purple{background:rgba(138,100,255,.12);} .pi-cyan{background:rgba(0,212,255,.12);}
+    .pay-icon svg{width:22px;height:22px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+    .pi-purple svg{stroke:var(--accent);} .pi-cyan svg{stroke:var(--accent2);}
+    .pay-name{font-weight:700;font-size:.95rem;margin-bottom:4px;} .pay-desc{font-size:.82rem;color:var(--muted);line-height:1.65;}
+    .calc-wrap{grid-column:1/-1;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:36px;}
+    .calc-header{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+    .calc-header svg{width:24px;height:24px;stroke:var(--gold);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+    .calc-header h3{font-weight:700;font-size:1.1rem;}
+    .calc-desc{color:var(--muted);font-size:.875rem;margin-bottom:28px;line-height:1.65;}
+    .calc-row{display:flex;gap:20px;align-items:flex-end;flex-wrap:wrap;}
+    .calc-field{flex:1;min-width:180px;}
+    .calc-field label{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+    .calc-field label svg{width:11px;height:11px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+    .calc-field input{width:100%;padding:13px 16px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:.95rem;outline:none;transition:border-color .2s;}
+    .calc-field input:focus{border-color:var(--accent);}
+    .calc-arrow{font-size:1.5rem;color:var(--muted);padding-bottom:12px;}
+    .calc-result-box{flex:1;min-width:180px;background:rgba(245,200,66,.06);border:1px solid rgba(245,200,66,.2);border-radius:10px;padding:13px 20px;}
+    .calc-result-label{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+    .calc-result-val{font-weight:800;font-size:2rem;letter-spacing:-1px;color:var(--gold);line-height:1;}
+    .calc-result-sub{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);letter-spacing:.5px;margin-top:4px;}
+    .terms-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;}
+    .term-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 24px;display:flex;gap:14px;transition:border-color .3s;}
+    .term-card:hover{border-color:var(--border-h);}
+    .term-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+    .tic-p{background:rgba(138,100,255,.12);} .tic-c{background:rgba(0,212,255,.12);} .tic-g{background:rgba(245,200,66,.12);} .tic-r{background:rgba(255,85,85,.12);}
+    .term-icon svg{width:18px;height:18px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+    .tic-p svg{stroke:var(--accent);} .tic-c svg{stroke:var(--accent2);} .tic-g svg{stroke:var(--gold);} .tic-r svg{stroke:var(--red);}
+    .term-body{flex:1;} .term-title{font-weight:700;font-size:.9rem;margin-bottom:5px;} .term-desc{font-size:.82rem;color:var(--muted);line-height:1.65;}
+    footer{position:relative;z-index:1;padding:48px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;}
+    .footer-brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.1rem;letter-spacing:-0.3px;color:var(--text);}
+    .footer-brand .logo-q{color:var(--accent);}
+    .footer-links{display:flex;gap:20px;flex-wrap:wrap;}
+    .footer-links a{font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s;}
+    .footer-links a:hover{color:var(--accent);}
+    .footer-copy{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--muted);letter-spacing:.5px;}
+    .reveal{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease;}
+    .reveal.visible{opacity:1;transform:none;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+    @keyframes fadeRight{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
+    @media(max-width:900px){.hero-inner{grid-template-columns:1fr;gap:40px;}.hero-card{opacity:1;animation:none;}.pricing-layout{grid-template-columns:1fr;}}
+    @media(max-width:768px){nav{padding:14px 20px;}.nav-center,.badge-available{display:none;}.hamburger{display:flex;}.section,#hero{padding-left:20px;padding-right:20px;}#hero{padding-top:90px;}footer{padding:32px 20px;flex-direction:column;align-items:flex-start;}}
+    @media(max-width:500px){.hero-btns{flex-direction:column;}.btn-primary,.btn-ghost{justify-content:center;}.calc-arrow{display:none;}.media-grid{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">&#x2715;</button>
+  <img class="lightbox-img" id="lightboxImg" src="" alt=""/>
+</div>
+
+<!-- NAVBAR -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-icon">
+      <img src="https://cdn.discordapp.com/attachments/1346919008989085830/1508184760709681365/QuixCore_Logo_Discord.png?ex=6a149e03&is=6a134c83&hm=d384462460bdf9e1ad56329a86930fcc808fddd5f0604cd5a313b87f5e9af6a1&" alt="logo"/>
+    </div>
+    <span><span class="logo-q">Q</span>uixsere</span>
+  </a>
+  <div class="nav-center">
+    <a href="#about" class="nav-link"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>About</a>
+    <a href="#models" class="nav-link"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>3D Models</a>
+    <a href="#building" class="nav-link"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Building</a>
+    <a href="#projects" class="nav-link"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Projects</a>
+    <a href="#pricing" class="nav-link"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Pricing</a>
+  </div>
+  <div class="nav-right">
+    <div class="badge-available"><div class="badge-dot"></div>Open for work</div>
+    <!-- X / Twitter button -->
+    <a href="https://x.com/quixsere" target="_blank" class="btn-contact btn-x" title="X Profile">
+      <svg viewBox="0 0 24 24" style="fill:#fff;stroke:none;width:14px;height:14px;"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.259 5.63 5.905-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      X Profile
+    </a>
+    <!-- Discord button -->
+    <a href="https://discord.gg/rFgcWqVb9d" target="_blank" class="btn-contact">
+      <svg viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+      Contact
+    </a>
+    <button class="hamburger" id="hamBtn" onclick="toggleMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about" onclick="closeMenu()"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>About</a>
+  <a href="#models" onclick="closeMenu()"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>3D Models</a>
+  <a href="#building" onclick="closeMenu()"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Building</a>
+  <a href="#projects" onclick="closeMenu()"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Projects</a>
+  <a href="#pricing" onclick="closeMenu()"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Pricing</a>
+  <a href="https://x.com/quixsere" target="_blank"><svg viewBox="0 0 24 24" class="x-icon" style="fill:var(--accent);stroke:none;"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.259 5.63 5.905-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>X Profile</a>
+  <a href="https://discord.gg/rFgcWqVb9d" target="_blank"><svg viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>Discord</a>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-tag">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        Roblox Modeller &amp; Builder
+      </div>
+      <h1 class="hero-title">Hi, I'm <span class="name">Quixsere</span><span class="role">I craft worlds &amp; models<br/>in Roblox Studio</span></h1>
+      <p class="hero-desc">Passionate about creating stunning 3D models, detailed environments, and immersive Roblox experiences. Every build tells a story — and I make sure yours looks incredible.</p>
+      <div class="hero-pills">
+        <div class="pill"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>3D Modelling</div>
+        <div class="pill"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Building</div>
+        <div class="pill"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Fast Delivery</div>
+        <div class="pill"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Quality Guaranteed</div>
+      </div>
+      <div class="hero-btns">
+        <a href="https://discord.gg/rFgcWqVb9d" target="_blank" class="btn-primary">
+          <svg viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+          Hire Me
+        </a>
+        <a href="#models" class="btn-ghost"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>See My Work</a>
+      </div>
+    </div>
+    <div class="hero-card">
+      <div class="hero-card-title">Quick Stats</div>
+      <div class="stat-row">
+        <div class="stat-item"><div class="stat-icon si-purple"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div><div class="stat-info"><div class="stat-num s-purple">3+</div><div class="stat-lbl">Years Building in Roblox</div></div></div>
+        <div class="stat-item"><div class="stat-icon si-cyan"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div><div class="stat-info"><div class="stat-num s-cyan">30+</div><div class="stat-lbl">3D Models Created</div></div></div>
+        <div class="stat-item"><div class="stat-icon si-gold"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div class="stat-info"><div class="stat-num s-gold">5+</div><div class="stat-lbl">Projects Completed</div></div></div>
+        <div class="stat-item"><div class="stat-icon si-green"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><div class="stat-info"><div class="stat-num s-green">100%</div><div class="stat-lbl">Client Satisfaction</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="section section-alt">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>About Me</div>
+    <h2 class="section-title reveal">Why choose Quixsere?</h2>
+    <p class="section-sub reveal">I don't just build — I create experiences. Every model, every map, every detail is crafted with intention and passion for Roblox development.</p>
+    <div class="skills-grid">
+      <div class="skill-card reveal"><div class="skill-icon-wrap sik-purple"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div><h3>3D Modelling</h3><p>Custom meshes, props, characters, and assets crafted with precision — ready to drop straight into your Roblox game.</p><div class="skill-tags"><span class="skill-tag">Blender</span><span class="skill-tag">Roblox Meshes</span></div></div>
+      <div class="skill-card reveal"><div class="skill-icon-wrap sik-cyan"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div><h3>Studio Building</h3><p>From small maps to massive open-world environments — I build detailed, optimized, and visually stunning worlds in Roblox Studio.</p><div class="skill-tags"><span class="skill-tag">Terrain</span><span class="skill-tag">Lighting</span><span class="skill-tag">Optimization</span></div></div>
+      <div class="skill-card reveal"><div class="skill-icon-wrap sik-gold"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07M8.46 8.46a5 5 0 0 0 0 7.07"/></svg></div><h3>Atmospheric Design</h3><p>Lighting, effects, fog, and ambience that make your game feel alive.</p><div class="skill-tags"><span class="skill-tag">SkyBox</span><span class="skill-tag">Atmosphere</span><span class="skill-tag">Particles</span></div></div>
+      <div class="skill-card reveal"><div class="skill-icon-wrap sik-green"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><h3>Optimized &amp; Performant</h3><p>Every build is made with performance in mind — low draw calls, proper LOD design, and clean Union usage.</p><div class="skill-tags"><span class="skill-tag">LOD</span><span class="skill-tag">Draw Calls</span><span class="skill-tag">Clean Parts</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- STATUS -->
+<section class="section">
+  <div class="section-inner">
+    <div class="section-eyebrow section-eyebrow-cyan reveal"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Availability</div>
+    <h2 class="section-title reveal">Current Status</h2>
+    <p class="section-sub reveal">Check my availability before reaching out — this is updated regularly.</p>
+    <div class="status-row reveal">
+      <div class="status-card"><div class="status-icon-wrap sic-green"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><div><div class="status-lbl">Commissions</div><div class="status-val sv-green" style="display:flex;align-items:center;gap:8px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;display:inline-block;"></span>Available</div></div></div>
+      <div class="status-card"><div class="status-icon-wrap sic-red"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div><div><div class="status-lbl">Long-term Projects</div><div class="status-val sv-red" style="display:flex;align-items:center;gap:8px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block;"></span>Unavailable</div></div></div>
+      <div class="status-card"><div class="status-icon-wrap sic-gold"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div><div class="status-lbl">Response Time</div><div class="status-val sv-gold">~24 hours</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3D MODELS -->
+<section id="models" class="section section-alt">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>3D Models</div>
+    <h2 class="section-title reveal">My 3D Models</h2>
+    <p class="section-sub reveal">Custom meshes and assets I've created for Roblox games. Click any image to view full size.</p>
+    <div class="media-grid">
+      <div class="img-card reveal" onclick="openLightbox('https://cdn.discordapp.com/attachments/1346919008989085830/1508105281228505169/image.png?ex=6a1453fe&is=6a13027e&hm=bd74aae70d256115f314dcc3a62b037663bf7034f2eb360fe5ecebc426710f01&')"><div class="img-wrap"><img src="https://cdn.discordapp.com/attachments/1346919008989085830/1508105281228505169/image.png?ex=6a1453fe&is=6a13027e&hm=bd74aae70d256115f314dcc3a62b037663bf7034f2eb360fe5ecebc426710f01&" alt="City Props Pack" loading="lazy"/></div><div class="card-info"><div class="card-info-left"><div class="card-num">001</div><div class="card-label">City Props Pack</div></div><div class="card-badge cb-purple">MODEL</div></div></div>
+      <div class="img-card reveal" onclick="openLightbox('https://cdn.discordapp.com/attachments/1346919008989085830/1508105510170267668/image.png?ex=6a145434&is=6a1302b4&hm=b6690e88c7685d688e38efee80ba99b93d6de49fe7f48bbfb32a77c438afc839&')"><div class="img-wrap"><img src="https://cdn.discordapp.com/attachments/1346919008989085830/1508105510170267668/image.png?ex=6a145434&is=6a1302b4&hm=b6690e88c7685d688e38efee80ba99b93d6de49fe7f48bbfb32a77c438afc839&" alt="Studs Style Pack" loading="lazy"/></div><div class="card-info"><div class="card-info-left"><div class="card-num">002</div><div class="card-label">Studs Style Pack</div></div><div class="card-badge cb-purple">MODEL</div></div></div>
+      <div class="img-card reveal" onclick="openLightbox('https://cdn.discordapp.com/attachments/1346919008989085830/1508104718155518073/image.png?ex=6a145378&is=6a1301f8&hm=fa2b53a77f484df7cd66eec1a82f4aee48afa2b764788b50e156c0a216e8a114&')"><div class="img-wrap"><img src="https://cdn.discordapp.com/attachments/1346919008989085830/1508104718155518073/image.png?ex=6a145378&is=6a1301f8&hm=fa2b53a77f484df7cd66eec1a82f4aee48afa2b764788b50e156c0a216e8a114&" alt="Simple Nature Pack" loading="lazy"/></div><div class="card-info"><div class="card-info-left"><div class="card-num">003</div><div class="card-label">Simple Nature Pack</div></div><div class="card-badge cb-purple">MODEL</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- BUILDING -->
+<section id="building" class="section">
+  <div class="section-inner">
+    <div class="section-eyebrow section-eyebrow-cyan reveal"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Studio Building</div>
+    <h2 class="section-title reveal">Roblox Studio Builds</h2>
+    <p class="section-sub reveal">Maps, environments, and scenes built directly in Roblox Studio.</p>
+    <div class="media-grid">
+      <div class="img-card reveal" onclick="openLightbox('https://cdn.discordapp.com/attachments/1346919008989085830/1508105091478061198/image.png?ex=6a1453d1&is=6a130251&hm=b04eb9fedb044cd6746193870126deb7bec526922d7843fb6c6dacfad21fac29&')"><div class="img-wrap"><img src="https://cdn.discordapp.com/attachments/1346919008989085830/1508105091478061198/image.png?ex=6a1453d1&is=6a130251&hm=b04eb9fedb044cd6746193870126deb7bec526922d7843fb6c6dacfad21fac29&" alt="Simple Town" loading="lazy" style="object-position:top;"/></div><div class="card-info"><div class="card-info-left"><span class="card-num">#001</span><span class="card-label">Simple Town</span></div><span class="card-badge cb-cyan">Studio Build</span></div></div>
+      <div class="img-card reveal" onclick="openLightbox('https://cdn.discordapp.com/attachments/1346919008989085830/1508106347965579506/image.png?ex=6a1454fc&is=6a13037c&hm=e3e9231b690c9e3adea600cd0b40204d25e85ba0392f2f7c2de44861baeeb295&')"><div class="img-wrap"><img src="https://cdn.discordapp.com/attachments/1346919008989085830/1508106347965579506/image.png?ex=6a1454fc&is=6a13037c&hm=e3e9231b690c9e3adea600cd0b40204d25e85ba0392f2f7c2de44861baeeb295&" alt="1 Stud Width Challenge" loading="lazy" style="object-position:top;"/></div><div class="card-info"><div class="card-info-left"><span class="card-num">#002</span><span class="card-label">1 Stud Width Challenge</span></div><span class="card-badge cb-cyan">Studio Build</span></div></div>
+      <div class="img-card reveal" onclick="openLightbox('https://cdn.discordapp.com/attachments/1346919008989085830/1508107171227897866/image.png?ex=6a1455c0&is=6a130440&hm=18efef049a23999e32d0149556d715ca205be9d35a8838a02ab438f8e0bffa13&')"><div class="img-wrap"><img src="https://cdn.discordapp.com/attachments/1346919008989085830/1508107171227897866/image.png?ex=6a1455c0&is=6a130440&hm=18efef049a23999e32d0149556d715ca205be9d35a8838a02ab438f8e0bffa13&" alt="Room Lost in Time" loading="lazy" style="object-position:top;"/></div><div class="card-info"><div class="card-info-left"><span class="card-num">#003</span><span class="card-label">Room Lost in Time</span></div><span class="card-badge cb-cyan">Studio Build</span></div></div>
+      <div class="img-card reveal" onclick="openLightbox('https://cdn.discordapp.com/attachments/1346919008989085830/1508102172951314564/image.png?ex=6a145119&is=6a12ff99&hm=ce8a68d8938026b8deafb9c28adbf7aa69de0bb7637b1e7bbf4c2ea48c6766f9&')"><div class="img-wrap"><img src="https://cdn.discordapp.com/attachments/1346919008989085830/1508102172951314564/image.png?ex=6a145119&is=6a12ff99&hm=ce8a68d8938026b8deafb9c28adbf7aa69de0bb7637b1e7bbf4c2ea48c6766f9&" alt="Lab Storage" loading="lazy" style="object-position:top;"/></div><div class="card-info"><div class="card-info-left"><span class="card-num">#004</span><span class="card-label">Lab Storage</span></div><span class="card-badge cb-cyan">Studio Build</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects" class="section section-alt">
+  <div class="section-inner">
+    <div class="section-eyebrow section-eyebrow-gold reveal"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Projects</div>
+    <h2 class="section-title reveal">Featured Projects</h2>
+    <p class="section-sub reveal">Full game projects I am working on.</p>
+    <div class="media-grid">
+      <div class="img-card reveal" onclick="openLightbox('https://cdn.discordapp.com/attachments/1346919008989085830/1508101779475402772/image.png?ex=6a1450bb&is=6a12ff3b&hm=3f4bcfff093b30717fed94b6183c4ad3b29355b7bfdc17a14dd4c3e237662d99&')"><div class="img-wrap"><img src="https://cdn.discordapp.com/attachments/1346919008989085830/1508101779475402772/image.png?ex=6a1450bb&is=6a12ff3b&hm=3f4bcfff093b30717fed94b6183c4ad3b29355b7bfdc17a14dd4c3e237662d99&" alt="ExCore Lab" loading="lazy"/></div><div class="card-info"><div class="card-info-left"><div class="card-num">001</div><div class="card-label">ExCore Lab</div></div><div class="card-badge cb-gold">PROJECT</div></div></div>
+      <div class="img-card reveal" onclick="openLightbox('https://cdn.discordapp.com/attachments/1346919008989085830/1508102623314841680/image.png?ex=6a145184&is=6a130004&hm=ff04447a1bb6cca4f781b5ae9aa11e967abd1719c9e97cbd11e4fca8c1313c4d&')"><div class="img-wrap"><img src="https://cdn.discordapp.com/attachments/1346919008989085830/1508102623314841680/image.png?ex=6a145184&is=6a130004&hm=ff04447a1bb6cca4f781b5ae9aa11e967abd1719c9e97cbd11e4fca8c1313c4d&" alt="Urban Pause" loading="lazy"/></div><div class="card-info"><div class="card-info-left"><div class="card-num">002</div><div class="card-label">Urban Pause</div></div><div class="card-badge cb-purple">PROJECT</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" class="section">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Pricing</div>
+    <h2 class="section-title reveal">Rates &amp; Payments</h2>
+    <p class="section-sub reveal">All prices depend on complexity. Get in touch on Discord and I'll give you a custom quote.</p>
+    <div class="pricing-layout">
+      <div class="price-main reveal">
+        <div class="price-amount">$5 <span>USD - Start Price</span></div>
+        <div class="price-or">or 2,500 Robux</div>
+        <div class="price-feature"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Price scales with project scope</div>
+        <div class="price-feature"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Custom quote after discussion</div>
+        <div class="price-feature"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>50% upfront before work begins</div>
+        <div class="price-feature"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Revisions included</div>
+        <br/>
+        <a href="https://discord.gg/rFgcWqVb9d" target="_blank" class="btn-primary" style="width:100%;justify-content:center;">
+          <svg viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+          Get a Quote on Discord
+        </a>
+      </div>
+      <div class="payments-col">
+        <div class="pay-card reveal"><div class="pay-icon pi-purple"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div><div><div class="pay-name">Robux</div><div class="pay-desc">Via <strong>Group Funds</strong> or <strong>Gamepass</strong>. For Gamepass, you must cover Roblox's 30% tax — use the calculator below.</div></div></div>
+        <div class="pay-card reveal"><div class="pay-icon pi-cyan"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><div><div class="pay-name">PayPal</div><div class="pay-desc">Payments processed securely via <strong>PayPal</strong>. Invoice or payment link sent after we agree on scope.</div></div></div>
+        <div class="pay-card reveal" style="background:rgba(245,200,66,.04);border-color:rgba(245,200,66,.15);"><div class="pay-icon" style="background:rgba(245,200,66,.12);"><svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:var(--gold);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div><div class="pay-name" style="color:var(--gold)">Notice</div><div class="pay-desc"><strong>50% of the total payment is required upfront</strong> before any work begins.</div></div></div>
+      </div>
+      <div class="calc-wrap reveal">
+        <div class="calc-header"><svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg><h3>Robux Tax Calculator</h3></div>
+        <p class="calc-desc">Enter the amount of Robux you want me to receive — the calculator will show the Gamepass price you need to set (covers Roblox's 30% cut).</p>
+        <div class="calc-row">
+          <div class="calc-field"><label><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Robux I receive</label><input type="number" id="robuxIn" placeholder="e.g. 2500" min="0" oninput="calcTax()"/></div>
+          <div class="calc-arrow">&#x2192;</div>
+          <div class="calc-field"><label><svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/></svg>Gamepass price you set</label><div class="calc-result-box"><div class="calc-result-label">Result</div><div class="calc-result-val" id="robuxOut">R$ 0</div><div class="calc-result-sub">includes 30% Roblox tax</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TERMS -->
+<section class="section section-alt">
+  <div class="section-inner">
+    <div class="section-eyebrow section-eyebrow-gold reveal"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Terms</div>
+    <h2 class="section-title reveal">Payment Terms</h2>
+    <p class="section-sub reveal">Please read these before reaching out so we're on the same page from the start.</p>
+    <div class="terms-grid">
+      <div class="term-card reveal"><div class="term-icon tic-p"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="term-body"><div class="term-title">Milestone Payments</div><div class="term-desc">Larger projects require <strong>per-task payments</strong> to keep things fair and transparent for both sides.</div></div></div>
+      <div class="term-card reveal"><div class="term-icon tic-c"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div class="term-body"><div class="term-title">50% Upfront</div><div class="term-desc"><strong>Half the payment is required before work begins.</strong> This secures your spot and protects both of us.</div></div></div>
+      <div class="term-card reveal"><div class="term-icon tic-g"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><div class="term-body"><div class="term-title">Refunds (My Cancellation)</div><div class="term-desc">If I must cancel, you receive a <strong>full refund</strong>. No exceptions — your money is safe.</div></div></div>
+      <div class="term-card reveal"><div class="term-icon tic-r"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div><div class="term-body"><div class="term-title">No Refunds (Client Cancellation)</div><div class="term-desc">If <strong>you</strong> cancel after work has started, no refund is issued. Please be sure before we begin.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">
+    <div class="nav-logo-icon" style="width:28px;height:28px;border-radius:7px;overflow:hidden;">
+      <img src="https://cdn.discordapp.com/attachments/1346919008989085830/1508184760709681365/QuixCore_Logo_Discord.png?ex=6a149e03&is=6a134c83&hm=d384462460bdf9e1ad56329a86930fcc808fddd5f0604cd5a313b87f5e9af6a1&" style="width:28px;height:28px;object-fit:cover;" alt="logo"/>
+    </div>
+    <span><span class="logo-q">Q</span>uixsere</span>
+  </div>
+  <div class="footer-links">
+    <a href="#about">About</a>
+    <a href="#models">3D Models</a>
+    <a href="#building">Building</a>
+    <a href="#projects">Projects</a>
+    <a href="#pricing">Pricing</a>
+    <a href="https://x.com/quixsere" target="_blank">X Profile</a>
+    <a href="https://discord.gg/rFgcWqVb9d" target="_blank">Discord</a>
+  </div>
+  <div class="footer-copy">Built with &#x2665; by Quixsere &middot; 2026</div>
+</footer>
+
+<script>
+  function calcTax(){const v=parseFloat(document.getElementById('robuxIn').value)||0;document.getElementById('robuxOut').textContent='R$ '+Math.ceil(v/0.7).toLocaleString();}
+  function openLightbox(src){if(!src)return;document.getElementById('lightboxImg').src=src;document.getElementById('lightbox').classList.add('open');document.body.style.overflow='hidden';}
+  function closeLightbox(){document.getElementById('lightbox').classList.remove('open');document.getElementById('lightboxImg').src='';document.body.style.overflow='auto';}
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox();});
+  document.getElementById('lightbox').addEventListener('click',function(e){if(e.target.id==='lightbox')closeLightbox();});
+  function toggleMenu(){document.getElementById('mobileMenu').classList.toggle('open');}
+  function closeMenu(){document.getElementById('mobileMenu').classList.remove('open');}
+  const reveals=document.querySelectorAll('.reveal');
+  const ro=new IntersectionObserver(entries=>{entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*70);ro.unobserve(e.target);}});},{threshold:0.08});
+  reveals.forEach(el=>ro.observe(el));
+</script>
+</body>
+</html>
